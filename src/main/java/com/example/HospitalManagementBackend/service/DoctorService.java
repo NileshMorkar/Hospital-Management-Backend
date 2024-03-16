@@ -15,9 +15,9 @@ public interface DoctorService {
 
     ApiResponseMessage updateDoctorNamePassword(DoctorRequest doctorRequest);
 
-    ApiResponseMessage updateStatusOfAppointment(Long doctorId, Long appointmentId);
+    ApiResponseMessage updateStatusOfAppointment(String userEmail, Long appointmentId);
 
-    List<AppointmentResponse> getAllAppointments(Long doctorId);
+    List<AppointmentResponse> getAllAppointments(String userEmail);
 
     List<DoctorResponse> searchDoctorByName(String name);
 }

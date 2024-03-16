@@ -97,9 +97,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public ApiResponseMessage updateStatusOfAppointment(Long doctorId, Long appointmentId) {
+    public ApiResponseMessage updateStatusOfAppointment(String userEmail, Long appointmentId) {
 
-        DoctorEntity doctor = doctorRepository.findById(doctorId).orElse(null);
+        DoctorEntity doctor = doctorRepository.findByEmail(userEmail).orElse(null);
 
         AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
 
@@ -122,8 +122,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<AppointmentResponse> getAllAppointments(Long doctorId) {
-        DoctorEntity doctor = doctorRepository.findById(doctorId).orElse(null);
+    public List<AppointmentResponse> getAllAppointments(String userEmail) {
+        DoctorEntity doctor = doctorRepository.findByEmail(userEmail).orElse(null);
         if (doctor == null)
             return new ArrayList<>();
         List<AppointmentEntity> appointmentEntityList = doctor.getAppointments();

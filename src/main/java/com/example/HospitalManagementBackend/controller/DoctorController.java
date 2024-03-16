@@ -10,9 +10,12 @@ import com.example.HospitalManagementBackend.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @RestController
@@ -30,19 +33,38 @@ public class DoctorController {
 
     @PutMapping("/update-doctor")
     public ResponseEntity<ApiResponseMessage> updateDoctorNamePassword(@RequestBody DoctorRequest doctorRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        if (!Objects.equals(userEmail, doctorRequest.getEmail())) {
+            ApiResponseMessage apiResponseMessage = ApiResponseMessage
+                    .builder()
+                    .message("Email Is Not Valid!")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(apiResponseMessage);
+        }
+
+
         ApiResponseMessage responseMessage = doctorService.updateDoctorNamePassword(doctorRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PutMapping("/{doctorId}/update-status/{appointmentId}")
+    @PutMapping("/update-status/{appointmentId}")
     public ResponseEntity<ApiResponseMessage> updateStatusOfAppointment(@PathVariable Long doctorId, @PathVariable Long appointmentId) {
-        ApiResponseMessage responseMessage = doctorService.updateStatusOfAppointment(doctorId, appointmentId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        ApiResponseMessage responseMessage = doctorService.updateStatusOfAppointment(userEmail, appointmentId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @GetMapping("/{doctorId}/get-all-appointments")
-    public ResponseEntity<List<AppointmentResponse>> getAllAppointments(@PathVariable Long doctorId) {
-        List<AppointmentResponse> appointmentResponseList = doctorService.getAllAppointments(doctorId);
+    @GetMapping("/get-all-appointments")
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<AppointmentResponse> appointmentResponseList = doctorService.getAllAppointments(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(appointmentResponseList);
     }
 

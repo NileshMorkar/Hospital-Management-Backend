@@ -175,16 +175,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AppointmentResponse> getAllAppointments(Long patientId) {
-        PatientEntity patient = userRepository.findById(patientId).orElse(null);
+    public List<AppointmentResponse> getAllAppointments(String userEmail) {
+        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
         assert patient != null;
         return patient.getAppointments().stream().map(Helper::getAppointmentResponseFromAppointmentEntity).toList();
     }
 
     @Override
-    public ApiResponseMessage deleteAppointmentById(Long patientId, Long appointmentId) {
+    public ApiResponseMessage deleteAppointmentById(String userEmail, Long appointmentId) {
 
-        PatientEntity patient = userRepository.findById(patientId).orElse(null);
+        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
         AppointmentEntity appointment = appointmentRepository.findById(appointmentId).orElse(null);
 
         if (appointment == null) {
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseMessage createReview(Long patientId, Long hospitalId, ReviewRequest reviewRequest) {
+    public ApiResponseMessage createReview(String userEmail, Long hospitalId, ReviewRequest reviewRequest) {
 
         HospitalEntity hospital = hospitalRepository.findById(hospitalId).orElse(null);
 
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
                     .build();
         }
 
-        PatientEntity patient = userRepository.findById(patientId).orElse(null);
+        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
         if (patient == null) {
             return ApiResponseMessage
                     .builder()
@@ -243,9 +243,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponseMessage deleteReview(Long patientId, Long reviewId) {
+    public ApiResponseMessage deleteReview(String userEmail, Long reviewId) {
 
-        PatientEntity patient = userRepository.findById(patientId).orElse(null);
+        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
         if (patient == null) {
             return ApiResponseMessage
                     .builder()

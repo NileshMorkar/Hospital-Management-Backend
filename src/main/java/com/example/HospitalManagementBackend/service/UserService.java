@@ -28,13 +28,13 @@ public interface UserService {
 
     ApiResponseMessage createNewAppointment(Long patientId, Long doctorId, AppointmentRequest appointmentRequest);
 
-    List<AppointmentResponse> getAllAppointments(Long patientId);
+    List<AppointmentResponse> getAllAppointments(String userEmail);
 
-    ApiResponseMessage deleteAppointmentById(Long patientId, Long appointmentId);
+    ApiResponseMessage deleteAppointmentById(String userEmail, Long appointmentId);
 
 
-    ApiResponseMessage createReview(Long patientId, Long hospitalId, ReviewRequest reviewRequest);
+    ApiResponseMessage createReview(String userEmail, Long hospitalId, ReviewRequest reviewRequest);
 
-    ApiResponseMessage deleteReview(Long patientId, Long reviewId);
+    ApiResponseMessage deleteReview(String userEmail, Long reviewId);
 
 }

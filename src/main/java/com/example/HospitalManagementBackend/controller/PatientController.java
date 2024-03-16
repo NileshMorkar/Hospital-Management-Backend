@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/patient")
 public class PatientController {
     @Autowired
     private UserService userService;
@@ -37,7 +37,7 @@ public class PatientController {
     @Autowired
     private ImageService imageService;
 
-    @PostMapping("/create-user")
+    @PostMapping("/create-patient")
     public ResponseEntity<UserResponse> create(@RequestBody @Valid UserRequest userRequest) throws GlobalException {
         return userService.createNormalUser(userRequest);
     }
@@ -58,34 +58,49 @@ public class PatientController {
     }
 
 
-    @GetMapping("/{patientId}/get-all-appointments")
-    public ResponseEntity<List<AppointmentResponse>> getAllAppointments(@PathVariable Long patientId) {
-        List<AppointmentResponse> appointmentResponses = userService.getAllAppointments(patientId);
+    @GetMapping("/get-all-appointments")
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<AppointmentResponse> appointmentResponses = userService.getAllAppointments(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(appointmentResponses);
     }
 
 
-    @DeleteMapping("/{patientId}/delete-appointment/{appointmentId}")
-    public ResponseEntity<ApiResponseMessage> deleteAppointmentById(@PathVariable Long patientId, @PathVariable Long appointmentId) {
-        ApiResponseMessage responseMessage = userService.deleteAppointmentById(patientId, appointmentId);
+    @DeleteMapping("/delete-appointment/{appointmentId}")
+    public ResponseEntity<ApiResponseMessage> deleteAppointmentById(@PathVariable Long appointmentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        ApiResponseMessage responseMessage = userService.deleteAppointmentById(userEmail, appointmentId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PostMapping("/{patientId}/create-appointment/{doctorId}")
+    @PostMapping("/create-appointment/{doctorId}")
     public ResponseEntity<ApiResponseMessage> deleteAppointmentById(@PathVariable Long patientId, @PathVariable Long doctorId, @RequestBody AppointmentRequest appointmentRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
         ApiResponseMessage responseMessage = userService.createNewAppointment(patientId, doctorId, appointmentRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PostMapping("/{patientId}/create-review/{hospitalId}")
+    @PostMapping("/create-review/{hospitalId}")
     public ResponseEntity<ApiResponseMessage> createReview(@PathVariable Long patientId, @PathVariable Long hospitalId, @RequestBody ReviewRequest reviewRequest) {
-        ApiResponseMessage responseMessage = userService.createReview(patientId, hospitalId, reviewRequest);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        ApiResponseMessage responseMessage = userService.createReview(userEmail, hospitalId, reviewRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @DeleteMapping("/{patientId}/delete-review/{reviewId}")
-    public ResponseEntity<ApiResponseMessage> deleteReview(@PathVariable Long patientId, @PathVariable Long reviewId) {
-        ApiResponseMessage responseMessage = userService.deleteReview(patientId, reviewId);
+    @DeleteMapping("/delete-review/{reviewId}")
+    public ResponseEntity<ApiResponseMessage> deleteReview(@PathVariable Long reviewId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        ApiResponseMessage responseMessage = userService.deleteReview(userEmail, reviewId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
