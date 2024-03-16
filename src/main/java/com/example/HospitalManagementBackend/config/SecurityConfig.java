@@ -30,7 +30,11 @@ public class SecurityConfig {
             "/",
             "/health",
             "/",
-            "/user/create-user",
+            "/patient/create-patient",
+            "/doctor/create-doctor",
+            "/admin/create-admin",
+            "/get-all-doctors",
+            "/hospital/**",
             "/auth/login"
     };
     @Autowired
@@ -47,8 +51,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
-//                        .requestMatchers(PUBLIC_URLS).permitAll()
-                                .anyRequest().permitAll()
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

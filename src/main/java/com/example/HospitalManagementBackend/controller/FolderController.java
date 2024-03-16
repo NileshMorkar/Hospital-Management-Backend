@@ -3,6 +3,7 @@ package com.example.HospitalManagementBackend.controller;
 import com.example.HospitalManagementBackend.exception.GlobalException;
 import com.example.HospitalManagementBackend.model.request.ImageRequest;
 import com.example.HospitalManagementBackend.model.response.ApiResponseMessage;
+import com.example.HospitalManagementBackend.model.response.FolderResponse;
 import com.example.HospitalManagementBackend.model.response.ImageResponse;
 import com.example.HospitalManagementBackend.repository.UserRepository;
 import com.example.HospitalManagementBackend.service.CloudinaryImageService;
@@ -73,24 +74,20 @@ public class FolderController {
 
 
     @GetMapping("/{folderId}/get-images")
-    public List<ImageResponse> getAllImages(@PathVariable Long folderId) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
-//        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
-
-//        assert patient != null;
-        return imageService.getAllImages(folderId);
+    public List<ImageResponse> getAllImages(@PathVariable Long folderId) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        return imageService.getAllImages(userEmail, folderId);
 
     }
 
     @DeleteMapping("/image/{imageId}")
-    public ResponseEntity<ApiResponseMessage> deleteImageById(@PathVariable Long imageId) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
-//        PatientEntity patient = userRepository.findByEmail(userEmail).orElse(null);
+    public ResponseEntity<ApiResponseMessage> deleteImageById(@PathVariable Long imageId) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
-//        assert patient != null;
-        imageService.delete(imageId);
+        imageService.delete(userEmail, imageId);
+
         ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder()
                 .message("Image Deleted Successfully!")
                 .httpStatus(HttpStatus.OK)
@@ -100,17 +97,26 @@ public class FolderController {
     }
 
     @DeleteMapping("/{folderId}")
-    public ResponseEntity<ApiResponseMessage> deleteFolderById(@PathVariable Long folderId) {
+    public ResponseEntity<ApiResponseMessage> deleteFolderById(@PathVariable Long folderId) throws GlobalException {
 
-        folderService.delete(folderId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        folderService.delete(userEmail, folderId);
 
         ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder()
                 .message("Folder Deleted Successfully!")
                 .httpStatus(HttpStatus.OK)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponseMessage);
+    }
 
-
+    @GetMapping("/get-all")
+    public ResponseEntity<List<FolderResponse>> getAllFolders() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        List<FolderResponse> folderResponseList = folderService.getAllFolders(userEmail);
+        return ResponseEntity.status(HttpStatus.OK).body(folderResponseList);
     }
 
 }

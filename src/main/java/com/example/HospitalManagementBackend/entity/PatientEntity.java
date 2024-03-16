@@ -38,8 +38,8 @@ public class PatientEntity implements UserDetails {
     private List<AppointmentEntity> appointments;
 
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private RoleEntity role = new RoleEntity();
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private RoleEntity role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

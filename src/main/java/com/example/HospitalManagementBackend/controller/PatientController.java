@@ -27,13 +27,10 @@ import java.util.List;
 public class PatientController {
     @Autowired
     private UserService userService;
-
-
     @Autowired
     private CloudinaryImageService cloudinaryImageService;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ImageService imageService;
 
@@ -41,7 +38,6 @@ public class PatientController {
     public ResponseEntity<UserResponse> create(@RequestBody @Valid UserRequest userRequest) throws GlobalException {
         return userService.createNormalUser(userRequest);
     }
-
 
     @DeleteMapping
     ResponseEntity<ApiResponseMessage> delete() throws GlobalException {
@@ -57,7 +53,6 @@ public class PatientController {
         return userService.update(userEmail, newUser);
     }
 
-
     @GetMapping("/get-all-appointments")
     public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,7 +61,6 @@ public class PatientController {
         List<AppointmentResponse> appointmentResponses = userService.getAllAppointments(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(appointmentResponses);
     }
-
 
     @DeleteMapping("/delete-appointment/{appointmentId}")
     public ResponseEntity<ApiResponseMessage> deleteAppointmentById(@PathVariable Long appointmentId) {

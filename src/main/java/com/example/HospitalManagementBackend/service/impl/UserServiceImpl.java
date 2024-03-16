@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,11 +59,20 @@ public class UserServiceImpl implements UserService {
         //Set Password By Using Encode
         userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
-        PatientEntity newUser = modelMapper.map(userRequest, PatientEntity.class);
-
         RoleEntity role = roleRepository.findByRoleName(RoleName.PATIENT_ROLE.name()).orElse(null);
+        PatientEntity newUser = PatientEntity
+                .builder()
+                .name(userRequest.getName())
+                .email(userRequest.getEmail())
+                .password(userRequest.getPassword())
+                .appointments(new ArrayList<>())
+                .role(role)
+                .gender(userRequest.getGender())
+                .address(userRequest.getAddress())
+                .contactNumber(userRequest.getContactNumber())
+                .dateOfBirth(userRequest.getDateOfBirth())
+                .build();
 
-        newUser.setRole(role);
 
         newUser = userRepository.save(newUser);
 
@@ -73,7 +83,11 @@ public class UserServiceImpl implements UserService {
                 .role(RoleName.PATIENT_ROLE.name())
                 .gender(newUser.getGender())
                 .image(newUser.getImage())
+                .address(userRequest.getAddress())
+                .contactNumber(userRequest.getContactNumber())
+                .dateOfBirth(userRequest.getDateOfBirth())
                 .build();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 

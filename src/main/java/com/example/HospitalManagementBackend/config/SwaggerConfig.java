@@ -41,11 +41,10 @@ public class SwaggerConfig {
         contact.setName("Nilesh Morkar");
         contact.setUrl("https://www.google.com/");
         return new Info()
-                .title("Electronic Store API")
-                .description("This Is Electronic Store Project API Developed By Nilesh Morkar")
+                .title("Hospital Management Backend")
+                .description("This Is Hospital Management Backend Project API Developed By Nilesh Morkar")
                 .contact(contact)
                 .version("v0.0.1")
-                .summary("Welcome !!");
-
+                .summary("Welcome !!!!!");
     }
 }
