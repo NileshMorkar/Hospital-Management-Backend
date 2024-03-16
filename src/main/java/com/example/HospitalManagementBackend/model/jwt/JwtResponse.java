@@ -1,6 +1,5 @@
 package com.example.HospitalManagementBackend.model.jwt;
 
-import com.example.HospitalManagementBackend.model.response.UserResponse;
 import lombok.*;
 
 @Setter
@@ -11,5 +10,4 @@ import lombok.*;
 @ToString
 public class JwtResponse {
     private String jwtToken;
-    private UserResponse user;
 }

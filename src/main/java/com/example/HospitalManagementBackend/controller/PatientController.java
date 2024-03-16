@@ -1,6 +1,7 @@
 package com.example.HospitalManagementBackend.controller;
 
 
+import com.example.HospitalManagementBackend.entity.PatientEntity;
 import com.example.HospitalManagementBackend.exception.GlobalException;
 import com.example.HospitalManagementBackend.model.request.AppointmentRequest;
 import com.example.HospitalManagementBackend.model.request.ReviewRequest;
@@ -13,17 +14,21 @@ import com.example.HospitalManagementBackend.service.CloudinaryImageService;
 import com.example.HospitalManagementBackend.service.ImageService;
 import com.example.HospitalManagementBackend.service.UserService;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/patient")
+@CrossOrigin("*")
 public class PatientController {
     @Autowired
     private UserService userService;
@@ -33,10 +38,15 @@ public class PatientController {
     private UserRepository userRepository;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @PostMapping("/create-patient")
     public ResponseEntity<UserResponse> create(@RequestBody @Valid UserRequest userRequest) throws GlobalException {
+
         return userService.createNormalUser(userRequest);
+
     }
 
     @DeleteMapping
@@ -96,6 +106,23 @@ public class PatientController {
 
         ApiResponseMessage responseMessage = userService.deleteReview(userEmail, reviewId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+    }
+
+    @PostMapping("/upload-profile-image")
+    public ResponseEntity<UserResponse> uploadProfileImage(@RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        Map map = cloudinaryImageService.upload(multipartFile);
+        String imageLink = map.get("secure_url").toString();
+
+        PatientEntity patientEntity = userRepository.findByEmail(userEmail).orElse(null);
+        patientEntity.setImage(imageLink);
+        userRepository.save(patientEntity);
+
+        UserResponse userResponse = modelMapper.map(patientEntity, UserResponse.class);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
 

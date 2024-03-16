@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin("*")
 public class AuthController {
 
     @Autowired
@@ -44,7 +45,7 @@ public class AuthController {
         UserResponse userResponse = modelMapper.map(userDetails, UserResponse.class);
         JwtResponse response = JwtResponse.builder()
                 .jwtToken(token)
-                .user(userResponse).build();
+                .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -10,7 +10,7 @@ import com.example.HospitalManagementBackend.model.response.ReviewResponse;
 import java.util.List;
 
 public interface HospitalService {
-    ApiResponseMessage createNewHospital(Long adminId, HospitalRequest hospitalRequest);
+    ApiResponseMessage createNewHospital(String adminId, HospitalRequest hospitalRequest);
 
     ApiResponseMessage updateHospitalInfo(HospitalRequest hospitalRequest);
 

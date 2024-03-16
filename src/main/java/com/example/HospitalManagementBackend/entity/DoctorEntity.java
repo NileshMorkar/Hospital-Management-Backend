@@ -30,10 +30,16 @@ public class DoctorEntity {
     private String experience;
     private String description;
 
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "hospital_id")
     private HospitalEntity hospital;
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentEntity> appointments;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private RoleEntity role;
+
 }

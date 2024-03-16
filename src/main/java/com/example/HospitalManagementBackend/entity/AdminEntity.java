@@ -25,7 +25,13 @@ public class AdminEntity {
     private String email;
     private String password;
 
+    private String image;
+
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "admin")
     private HospitalEntity hospital;
+
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private RoleEntity role;
 
 }

@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/folder")
+@CrossOrigin("*")
 public class FolderController {
     @Autowired
     private CloudinaryImageService cloudinaryImageService;
@@ -53,9 +54,7 @@ public class FolderController {
         String userEmail = authentication.getName();
 
         Map map = cloudinaryImageService.upload(multipartFile);
-
         String imageLink = map.get("secure_url").toString();
-
         ImageRequest imageRequest = ImageRequest
                 .builder()
                 .email(userEmail)

@@ -3,6 +3,8 @@ package com.example.HospitalManagementBackend.service.impl;
 import com.example.HospitalManagementBackend.entity.AppointmentEntity;
 import com.example.HospitalManagementBackend.entity.DoctorEntity;
 import com.example.HospitalManagementBackend.entity.HospitalEntity;
+import com.example.HospitalManagementBackend.entity.RoleEntity;
+import com.example.HospitalManagementBackend.enums.RoleName;
 import com.example.HospitalManagementBackend.exception.GlobalException;
 import com.example.HospitalManagementBackend.helper.Helper;
 import com.example.HospitalManagementBackend.model.request.DoctorRequest;
@@ -12,9 +14,11 @@ import com.example.HospitalManagementBackend.model.response.DoctorResponse;
 import com.example.HospitalManagementBackend.repository.AppointmentRepository;
 import com.example.HospitalManagementBackend.repository.DoctorRepository;
 import com.example.HospitalManagementBackend.repository.HospitalRepository;
+import com.example.HospitalManagementBackend.repository.RoleRepository;
 import com.example.HospitalManagementBackend.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,6 +36,12 @@ public class DoctorServiceImpl implements DoctorService {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public DoctorResponse createNewDoctor(DoctorRequest doctorRequest, Long hospitalId) throws GlobalException {
 
@@ -45,6 +55,8 @@ public class DoctorServiceImpl implements DoctorService {
             throw new GlobalException("Doctor Is Already Present!!", HttpStatus.NOT_FOUND);
         }
 
+        doctorRequest.setPassword(passwordEncoder.encode(doctorRequest.getPassword()));
+        RoleEntity roleEntity = roleRepository.findByRoleName(RoleName.DOCTOR_ROLE.name()).orElse(null);
         doctor = DoctorEntity
                 .builder()
                 .email(doctorRequest.getEmail())
@@ -57,6 +69,7 @@ public class DoctorServiceImpl implements DoctorService {
                 .specialization(doctorRequest.getSpecialization())
                 .qualification(doctorRequest.getQualification())
                 .appointments(new ArrayList<>())
+                .role(roleEntity)
                 .build();
 
         doctorRepository.save(doctor);

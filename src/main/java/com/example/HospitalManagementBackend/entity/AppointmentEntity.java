@@ -21,7 +21,7 @@ public class AppointmentEntity {
     private Long appointmentId;
 
     private Date appointmentDate;
-    //        @JsonFormat(pattern = "HH:mm")
+    //    @JsonFormat(pattern = "HH:mm")
     private LocalTime appointmentTime;
     private String status;
 

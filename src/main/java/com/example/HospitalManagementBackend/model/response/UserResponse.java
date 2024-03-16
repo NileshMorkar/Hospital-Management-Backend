@@ -1,5 +1,6 @@
 package com.example.HospitalManagementBackend.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class UserResponse {
     private String gender;
     private String image;
     private String role;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     private String contactNumber;
     private String address;

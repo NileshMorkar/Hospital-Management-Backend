@@ -39,11 +39,11 @@ public class HospitalServiceImpl implements HospitalService {
     private ModelMapper modelMapper;
 
     @Override
-    public ApiResponseMessage createNewHospital(Long adminId, HospitalRequest hospitalRequest) {
+    public ApiResponseMessage createNewHospital(String useEmail, HospitalRequest hospitalRequest) {
 
         HospitalEntity hospital = hospitalRepository.findByEmail(hospitalRequest.getEmail()).orElse(null);
 
-        AdminEntity admin = adminRepository.findById(adminId).orElse(null);
+        AdminEntity admin = adminRepository.findByEmail(useEmail).orElse(null);
 
         if (hospital != null) {
             return ApiResponseMessage

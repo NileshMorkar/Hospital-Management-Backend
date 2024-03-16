@@ -14,4 +14,6 @@ public class AdminResponse {
     private String name;
     private String email;
     private HospitalResponse hospital;
+    private String role;
+    private String image;
 }

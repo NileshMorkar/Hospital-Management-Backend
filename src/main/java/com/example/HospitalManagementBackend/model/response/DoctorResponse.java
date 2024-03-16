@@ -22,4 +22,6 @@ public class DoctorResponse {
     private String description;
 
     private HospitalResponse hospital;
+    private String role;
+    private String image;
 }
