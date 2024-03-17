@@ -3,6 +3,7 @@ package com.example.HospitalManagementBackend.controller;
 
 import com.example.HospitalManagementBackend.entity.PatientEntity;
 import com.example.HospitalManagementBackend.exception.GlobalException;
+import com.example.HospitalManagementBackend.model.jwt.JwtRequest;
 import com.example.HospitalManagementBackend.model.request.AppointmentRequest;
 import com.example.HospitalManagementBackend.model.request.ReviewRequest;
 import com.example.HospitalManagementBackend.model.request.UserRequest;
@@ -18,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,13 +41,39 @@ public class PatientController {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @PostMapping("/create-patient")
     public ResponseEntity<UserResponse> create(@RequestBody @Valid UserRequest userRequest) throws GlobalException {
-
         return userService.createNormalUser(userRequest);
-
     }
+
+
+    @GetMapping("/get/{userEmail}")
+    public ResponseEntity<UserResponse> getDetails(@PathVariable String userEmail) throws GlobalException {
+        PatientEntity patientEntity = userRepository.findByEmail(userEmail).orElseThrow(() -> new GlobalException("User Not Found", HttpStatus.NOT_FOUND));
+        UserResponse userResponse = modelMapper.map(patientEntity, UserResponse.class);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<ApiResponseMessage> signIn(@RequestBody JwtRequest jwtRequest) throws GlobalException {
+
+        PatientEntity patientEntity = userRepository.findByEmail(jwtRequest.getEmail()).orElseThrow(() -> new GlobalException("User Not Found", HttpStatus.NOT_FOUND));
+
+        if (!passwordEncoder.encode(jwtRequest.getPassword()).equals(patientEntity.getPassword())) {
+            throw new GlobalException("Password Is Incorrect", HttpStatus.BAD_REQUEST);
+        }
+
+        ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder()
+                .message("User Log In Successfully!")
+                .httpStatus(HttpStatus.OK)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponseMessage);
+    }
+
 
     @DeleteMapping("/{userEmail}")
     ResponseEntity<ApiResponseMessage> delete(@PathVariable String userEmail) throws GlobalException {
