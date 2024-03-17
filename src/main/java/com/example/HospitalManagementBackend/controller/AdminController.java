@@ -14,8 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,10 +51,10 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PostMapping("/create-hospital")
-    public ResponseEntity<ApiResponseMessage> createNewHospital(@RequestBody HospitalRequest hospitalRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+    @PostMapping("/{userEmail}/create-hospital")
+    public ResponseEntity<ApiResponseMessage> createNewHospital(@PathVariable String userEmail, @RequestBody HospitalRequest hospitalRequest) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         ApiResponseMessage responseMessage = hospitalService.createNewHospital(userEmail, hospitalRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
@@ -69,11 +67,11 @@ public class AdminController {
     }
 
 
-    @PostMapping("/upload-profile-image")
-    public ResponseEntity<AdminResponse> uploadProfileImage(@RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
+    @PostMapping("/{userEmail}/upload-profile-image")
+    public ResponseEntity<AdminResponse> uploadProfileImage(@PathVariable String userEmail, @RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         Map map = cloudinaryImageService.upload(multipartFile);
         String imageLink = map.get("secure_url").toString();

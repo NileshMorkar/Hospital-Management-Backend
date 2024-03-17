@@ -14,8 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,10 +44,10 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.OK).body(doctorResponse);
     }
 
-    @PutMapping("/update-doctor")
-    public ResponseEntity<ApiResponseMessage> updateDoctorNamePassword(@RequestBody DoctorRequest doctorRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+    @PutMapping("/{userEmail}/update-doctor")
+    public ResponseEntity<ApiResponseMessage> updateDoctorNamePassword(@PathVariable String userEmail, @RequestBody DoctorRequest doctorRequest) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         if (!Objects.equals(userEmail, doctorRequest.getEmail())) {
             ApiResponseMessage apiResponseMessage = ApiResponseMessage
@@ -65,19 +63,19 @@ public class DoctorController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PutMapping("/update-status/{appointmentId}")
-    public ResponseEntity<ApiResponseMessage> updateStatusOfAppointment(@PathVariable Long doctorId, @PathVariable Long appointmentId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+    @PutMapping("/{userEmail}/update-status/{appointmentId}")
+    public ResponseEntity<ApiResponseMessage> updateStatusOfAppointment(@PathVariable String userEmail, @PathVariable Long doctorId, @PathVariable Long appointmentId) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         ApiResponseMessage responseMessage = doctorService.updateStatusOfAppointment(userEmail, appointmentId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @GetMapping("/get-all-appointments")
-    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+    @GetMapping("/{userEmail}/get-all-appointments")
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments(@PathVariable String userEmail) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         List<AppointmentResponse> appointmentResponseList = doctorService.getAllAppointments(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(appointmentResponseList);
@@ -90,11 +88,11 @@ public class DoctorController {
     }
 
 
-    @PostMapping("/upload-profile-image")
-    public ResponseEntity<DoctorResponse> uploadProfileImage(@RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
+    @PostMapping("/{userEmail}/upload-profile-image")
+    public ResponseEntity<DoctorResponse> uploadProfileImage(@PathVariable String userEmail, @RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String userEmail = authentication.getName();
 
         Map map = cloudinaryImageService.upload(multipartFile);
         String imageLink = map.get("secure_url").toString();
