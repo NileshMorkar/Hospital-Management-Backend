@@ -19,6 +19,7 @@ public class HospitalResponse {
     private String state;
     private String zipCode;
     private String email;
+    private String image;
     private Integer capacity;
     private Date establishedDate;
     private String contactNumber;

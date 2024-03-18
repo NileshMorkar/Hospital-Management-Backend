@@ -21,6 +21,8 @@ public class HospitalRequest {
 
     private String email;
 
+    private String image;
+
     private Integer capacity;
     private Date establishedDate;
     private String contactNumber;

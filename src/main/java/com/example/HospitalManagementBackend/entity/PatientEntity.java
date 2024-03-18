@@ -32,7 +32,6 @@ public class PatientEntity {
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<AppointmentEntity> appointments;
 
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private RoleEntity role;
 

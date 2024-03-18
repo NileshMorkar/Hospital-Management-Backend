@@ -12,6 +12,8 @@ import com.example.HospitalManagementBackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/folder")
-@CrossOrigin("*")
+@CrossOrigin(origins = {"*"})
 public class FolderController {
     @Autowired
     private CloudinaryImageService cloudinaryImageService;
@@ -31,14 +33,11 @@ public class FolderController {
     @Autowired
     private FolderService folderService;
 
-    @PostMapping("/{userEmail}/create/{folderName}")
-    public ResponseEntity<ApiResponseMessage> createFolder(@PathVariable String userEmail, @PathVariable String folderName) throws GlobalException {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
-
-//        PatientEntity patientEntity = userRepository.findById(userId).orElseThrow(() -> new GlobalException("User Not Found!!",HttpStatus.NOT_FOUND));
+    @PostMapping("/create/{folderName}")
+    public ResponseEntity<ApiResponseMessage> createFolder(@PathVariable String folderName) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
         folderService.create(userEmail, folderName);
-
         ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder()
                 .message("Folder Created Successfully!")
                 .httpStatus(HttpStatus.OK)
@@ -47,10 +46,10 @@ public class FolderController {
     }
 
 
-    @PostMapping("/{userEmail}/{folderId}/create-image")
-    ResponseEntity<ApiResponseMessage> uploadFile(@PathVariable String userEmail, @PathVariable Long folderId, @RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
+    @PostMapping("/{folderId}/create-image")
+    ResponseEntity<ApiResponseMessage> uploadFile(@PathVariable Long folderId, @RequestParam(name = "image") MultipartFile multipartFile) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
         Map map = cloudinaryImageService.upload(multipartFile);
         String imageLink = map.get("secure_url").toString();
@@ -71,18 +70,18 @@ public class FolderController {
     }
 
 
-    @GetMapping("/{userEmail}/{folderId}/get-images")
-    public List<ImageResponse> getAllImages(@PathVariable String userEmail, @PathVariable Long folderId) throws GlobalException {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
+    @GetMapping("/{folderId}/get-images")
+    public List<ImageResponse> getAllImages(@PathVariable Long folderId) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
         return imageService.getAllImages(userEmail, folderId);
 
     }
 
-    @DeleteMapping("/{userEmail}/image/{imageId}")
-    public ResponseEntity<ApiResponseMessage> deleteImageById(@PathVariable String userEmail, @PathVariable Long imageId) throws GlobalException {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
+    @DeleteMapping("/image/{imageId}")
+    public ResponseEntity<ApiResponseMessage> deleteImageById(@PathVariable Long imageId) throws GlobalException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
         imageService.delete(userEmail, imageId);
 
@@ -94,11 +93,11 @@ public class FolderController {
 
     }
 
-    @DeleteMapping("/{userEmail}/{folderId}")
-    public ResponseEntity<ApiResponseMessage> deleteFolderById(@PathVariable String userEmail, @PathVariable Long folderId) throws GlobalException {
+    @DeleteMapping("/{folderId}")
+    public ResponseEntity<ApiResponseMessage> deleteFolderById(@PathVariable Long folderId) throws GlobalException {
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
         folderService.delete(userEmail, folderId);
 
@@ -109,10 +108,10 @@ public class FolderController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponseMessage);
     }
 
-    @GetMapping("/{userEmail}/get-all")
-    public ResponseEntity<List<FolderResponse>> getAllFolders(@PathVariable String userEmail) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String userEmail = authentication.getName();
+    @GetMapping("/get-all")
+    public ResponseEntity<List<FolderResponse>> getAllFolders() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
         List<FolderResponse> folderResponseList = folderService.getAllFolders(userEmail);
         return ResponseEntity.status(HttpStatus.OK).body(folderResponseList);
     }
